@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- ===================================================== -->
+  <!-- Basic meta tags – fill in the social banners later.  -->
+  <!-- ===================================================== -->
+  <meta name="viewport"    content="width=device-width, initial-scale=1">
+  <meta name="viewport"    content="width=device-width, initial-scale=1">
+
+  <!-- ===================================================== -->
+  <!-- SEO Meta Tags                                         -->
+  <!-- ===================================================== -->
+  <title>Recursive Self-Aggregation: Deep Thinking and Test-Time Scaling for LLM Reasoning | RSA</title>
+  <meta name="description" content="Recursive Self-Aggregation (RSA) improves LLM reasoning by combining parallel and sequential scaling: aggregate multiple chains-of-thought across iterations, then amplify gains with aggregation-aware RL. Strong results on AIME-25, HMMT-25, Reasoning Gym, LiveCodeBench, and SuperGPQA.">
+  <meta name="keywords" content="LLMs, reasoning, test-time scaling, deep thinking, deep research, chain-of-thought, self-aggregation, recursive self-aggregation, aggregation-aware RL, reinforcement learning, Pass@1, AIME, HMMT, Reasoning Gym, LiveCodeBench, SuperGPQA, Qwen3, DeepSeek-R1, o3-mini, LLM inference, population-based methods, evolutionary algorithms for reasoning, majority voting, best-of-N">
+  <meta name="author" content="Siddarth Venkatraman, Vineet Jain, Sarthak Mittal, Vedant Shah, Johan Obando-Ceron, Yoshua Bengio, Brian Bartoldson, Bhavya Kailkhura, Guillaume Lajoie, Glen Berseth, Nikolay Malkin, Moksh Jain">
+  <meta name="robots" content="index, follow">
+  <meta name="googlebot" content="index, follow">
+  <link rel="canonical" href="https://rsa-llm.github.io/">
+  
+  <!-- ===================================================== -->
+  <!-- Open Graph / Facebook                                 -->
+  <!-- ===================================================== -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rsa-llm.github.io/">
+  <meta property="og:title" content="Recursive Self-Aggregation: Deep Thinking and Test-Time Scaling for LLM Reasoning">
+  <meta property="og:description" content="RSA aggregates multiple chains-of-thought across iterations to unlock deep reasoning in LLMs. Aggregation-aware RL further boosts performance across math, coding, and knowledge tasks.">
+  <meta property="og:image" content="https://rsa-llm.github.io/static/images/main_results.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:site_name" content="Recursive Self-Aggregation Research">
+  
+  <!-- ===================================================== -->
+  <!-- Twitter Card                                          -->
+  <!-- ===================================================== -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://rsa-llm.github.io/">
+  <meta name="twitter:title" content="Recursive Self-Aggregation (RSA) for LLM Reasoning">
+  <meta name="twitter:description" content="Hybrid test-time scaling for LLMs: recursive aggregation of chains-of-thought, plus aggregation-aware RL.">
+  <meta name="twitter:image" content="https://rsa-llm.github.io/static/images/main_results.png">
+  <meta name="twitter:creator" content="@vineetjain96">
+  
+  <!-- ===================================================== -->
+  <!-- Academic/Research specific                            -->
+  <!-- ===================================================== -->
+  <meta name="citation_title" content="Recursive Self-Aggregation Unlocks Deep Thinking in Large Language Models">
+  <meta name="citation_author" content="Venkatraman, Siddarth">
+  <meta name="citation_author" content="Jain, Vineet">
+  <meta name="citation_author" content="Mittal, Sarthak">
+  <meta name="citation_author" content="Shah, Vedant">
+  <meta name="citation_author" content="Obando-Ceron, Johan">
+  <meta name="citation_author" content="Bengio, Yoshua">
+  <meta name="citation_author" content="Bartoldson, Brian">
+  <meta name="citation_author" content="Kailkhura, Bhavya">
+  <meta name="citation_author" content="Lajoie, Guillaume">
+  <meta name="citation_author" content="Berseth, Glen">
+  <meta name="citation_author" content="Malkin, Nikolay">
+  <meta name="citation_author" content="Jain, Moksh">
+  <meta name="citation_publication_date" content="2025">
+  <meta name="citation_pdf_url" content="https://rsa-llm.github.io/static/pdfs/Recursive_Self_Aggregation.pdf">
+  <meta name="citation_abstract_html_url" content="https://rsa-llm.github.io/">
+  <meta name="citation_language" content="en">
+  <meta name="citation_keywords" content="LLMs; reasoning; test-time scaling; deep thinking; deep research; chain-of-thought; self-aggregation; aggregation-aware RL; reinforcement learning">
+  
+  <!-- ===================================================== -->
+  <!-- Google Analytics 4                                    -->
+  <!-- ===================================================== -->
+  <!-- Replace GA_MEASUREMENT_ID with your actual GA4 Measurement ID -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'GA_MEASUREMENT_ID', {
+      page_title: 'Recursive Self-Aggregation',
+      page_location: window.location.href,
+      content_group1: 'Research Paper',
+      content_group2: 'Machine Learning',
+      content_group3: 'LLM Reasoning'
+    });
+  </script>
+
+  <!-- Fonts & CSS -->
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <!-- JS Deps -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+  <!-- MathJax for LaTeX math rendering -->
+  <script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true,
+        processEnvironments: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+      }
+    };
+  </script>
+  <script async src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <!-- Custom Slider Styling -->
+  <style>
+    /* No custom styling needed - using clean Bulma slider */
+  </style>
+  
+  <!-- ===================================================== -->
+  <!-- Structured Data (JSON-LD)                            -->
+  <!-- ===================================================== -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "Recursive Self-Aggregation Unlocks Deep Thinking in Large Language Models",
+    "description": "Recursive Self-Aggregation (RSA) is hybrid test-time scaling method that enables deep reasoning in large language models. It maintains a population of candidate solutions and iteratively recombines subsets of the population to produce a new population of improved solutions. We also introduce aggregation-aware RL training that further improves reasoning capabilities.",
+    "author": [
+      {
+        "@type": "Person",
+        "name": "Siddarth Venkatraman",
+        "url": "https://hyperpotatoneo.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Vineet Jain",
+        "url": "https://vineetjain96.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Sarthak Mittal",
+        "url": "https://sarthmit.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Vedant Shah",
+        "url": "https://veds12.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Johan Obando-Ceron",
+        "url": "https://johanobandoc.github.io/index.html",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Yoshua Bengio",
+        "url": "https://yoshuabengio.org/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Brian Bartoldson",
+        "url": "https://brianbartoldson.wordpress.com/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Lawrence Livermore National Laboratory"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": " Bhavya Kailkhura",
+        "url": "https://people.llnl.gov/kailkhura1",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Lawrence Livermore National Laboratory"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Guillaume Lajoie",
+        "url": "https://guillaumelajoie.com/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Glen Berseth",
+        "url": "https://neo-x.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Nikolay Malkin",
+        "url": "https://malkin1729.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "University of Edinburgh"
+        }
+      },
+      {
+        "@type": "Person",
+        "name": "Moksh Jain",
+        "url": "https://mj10.github.io/",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "Mila - Quebec Artificial Intelligence Institute"
+        }
+      },
+    ],
+    "datePublished": "2025",
+    "url": "https://rsa-llm.github.io/",
+    "image": "https://rsa-llm.github.io/static/images/main_results.png",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Mila - Quebec Artificial Intelligence Institute",
+      "url": "https://mila.quebec/"
+    },
+    "keywords": "LLMs, reasoning, test-time scaling, deep thinking, deep research, chain-of-thought, self-aggregation, recursive self-aggregation, aggregation-aware RL, Pass@1, AIME-25, HMMT-25, Reasoning Gym, LiveCodeBench, SuperGPQA",
+    "abstract": "Recursive Self-Aggregation (RSA) combines parallel and sequential test-time scaling by iteratively aggregating multiple chains of thought to form improved solutions. RSA enables deep reasoning and consistent gains across model families and tasks. Aggregation-aware RL further improves performance by aligning training with the aggregation objective.",
+    "about": [
+      {
+        "@type": "Thing",
+        "name": "Large Language Models"
+      },
+      {
+        "@type": "Thing", 
+        "name": "Reasoning"
+      },
+      {
+        "@type": "Thing",
+        "name": "Test-Time Scaling"
+      },
+      {
+        "@type": "Thing",
+        "name": "Deep Thinking"
+      },
+      {
+        "@type": "Thing",
+        "name": "Reinforcement Learning"
+      }
+    ],
+    "citation": {
+      "@type": "CreativeWork",
+      "name": "Recursive Self-Aggregation Unlocks Deep Thinking in Large Language Models"
+    }
+  }
+  </script>
+
+  <!-- Additional article tags for improved SEO keyword association -->
+  <meta property="article:tag" content="LLMs">
+  <meta property="article:tag" content="reasoning">
+  <meta property="article:tag" content="test-time scaling">
+  <meta property="article:tag" content="deep thinking">
+  <meta property="article:tag" content="deep research">
+  <meta property="article:tag" content="chain-of-thought">
+  <meta property="article:tag" content="self-aggregation">
+  <meta property="article:tag" content="recursive self-aggregation">
+  <meta property="article:tag" content="reinforcement learning">
+  <meta property="article:tag" content="aggregation-aware RL">
+</head>
+<body>
+
+<!-- ===================================================== -->
+<!-- NAVBAR                                                -->
+<!-- ===================================================== -->
+<!-- <nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow:1;justify-content:center;">
+      <a class="navbar-item" href="/"> <span class="icon"><i class="fas fa-home"></i></span></a>
+    </div>
+  </div>
+</nav> -->
+
+<!-- ===================================================== -->
+<section class="hero">
+  <div class="hero-body">
+    <!-- Title breaking out of container -->
+    <div style="display: flex; justify-content: center; margin: 1rem 0;">
+      <div style="width: 70vw; max-width: 1200px; text-align: center;">
+        <h1 class="title is-1 publication-title">Recursive Self-Aggregation Unlocks Deep Thinking in Large Language Models</h1>
+        <!-- <h2 class="subtitle">Anytime tree‑search sampling for diffusion models</h2> -->
+      </div>
+    </div>
+    
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column is-12 has-text-centered">
+          <!-- ===== AUTHORS (edit as needed) ===== -->
+          <div class="is-size-4 publication-authors">
+            <span class="author-block"><a href="https://hyperpotatoneo.github.io/">Siddarth Venkatraman</a><sup>* 1,2</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://vineetjain96.github.io/">Vineet Jain</a><sup>* 1,3</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://sarthmit.github.io/">Sarthak Mittal</a><sup>* 1,2</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://veds12.github.io/">Vedant Shah</a><sup>1,2</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://johanobandoc.github.io/index.html">Johan Obando-Ceron</a><sup>1,2</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://yoshuabengio.org/">Yoshua Bengio</a><sup>1,2,4,7</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://brianbartoldson.wordpress.com/">Brian Bartoldson</a><sup>5</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://people.llnl.gov/kailkhura1">Bhavya Kailkhura</a><sup>5</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://guillaumelajoie.com/">Guillaume Lajoie</a><sup>1,2,7</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://neo-x.github.io/">Glen Berseth</a><sup>1,2,7</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://malkin1729.github.io/">Nikolay Malkin</a><sup>6,8</sup></span>&nbsp;&nbsp;&nbsp;
+            <span class="author-block"><a href="https://mj10.github.io/">Moksh Jain</a><sup>1,2</sup></span>
+          </div>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>*</sup>Equal contribution</span>
+            <span class="author-block"><sup>1</sup>Mila - Québec AI Institute</span>
+            <span class="author-block"><sup>1</sup>Université de Montréal</span>
+            <span class="author-block"><sup>3</sup>McGill University</span>
+            <br/>
+            <span class="author-block"><sup>4</sup>LawZero</span>
+            <span class="author-block"><sup>5</sup>LLNL</span>          
+            <span class="author-block"><sup>6</sup>University of Edinburgh</span>
+            <span class="author-block"><sup>7</sup>CIFAR AI Chair</span>
+            <span class="author-block"><sup>8</sup>CIFAR Fellow</span>
+          </div>
+
+          <!-- ===== QUICK LINKS ===== -->
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="./static/pdfs/Recursive_Self_Aggregation.pdf" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/HyperPotatoNeo/RSA" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
+              </span>
+              <span class="link-block">
+                <a href="./static/pdfs/Recursive_Self_Aggregation.pdf" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv (coming soon)</span></a>
+              </span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== -->
+<section class="hero teaser">
+  <div class="hero-body">
+    <div class="has-text-centered" style="padding: 0rem 0;">
+      <!-- <video id="teaser" autoplay muted loop playsinline style="width: 80vw; max-width: 1400px; height: auto; display: block; margin: 0 auto;">
+        <img src="./static/images/main_results.png">
+      </video> -->
+      <div class="content has-text-centered">
+        <img src="./static/images/main_results.png" style="width: 70%; height: auto; display: block; margin: 0 auto;"/>
+      </div>
+    </div>
+    <div class="container is-max-desktop">
+      <h3 class="subtitle has-text-centered">
+        <strong>Recursive Self-Aggregation (RSA) substantially improves Pass@$1$ across tasks and model architectures.</strong> RSA enables the much smaller Qwen3-4B-Instruct-2507 to match the performance of larger reasoning models such as DeepSeek-R1 and o3-mini (high). These gains are further amplified through our proposed aggregation-aware RL framework.
+      </h3>
+    </div>
+  </div>
+</section>
+<hr/>
+
+<!-- ===================================================== -->
+<!-- ABSTRACT                                              -->
+<!-- ===================================================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered" style="padding: 0rem 0;">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>Test-time scaling methods improve the capabilities of Large Language Models (LLMs) by increasing the amount of compute used during inference to make a prediction. Inference-time compute can be scaled <em>in parallel</em> by choosing among multiple independent solutions or <em>sequentially</em> through self-refinement. We propose Recursive Self-Aggregation (RSA), a test-time scaling method inspired by evolutionary methods that combines the benefits of both parallel and sequential scaling. Each step of RSA refines a population of candidate reasoning chains through aggregation of subsets to yield a population of improved solutions, which are then used as the candidate pool for the next iteration. RSA exploits the rich information embedded in the reasoning chains -- not just the final answers -- and enables bootstrapping from partially correct intermediate steps within different chains of thought. Empirically, RSA delivers substantial performance gains with increasing compute budgets across diverse tasks, model families and sizes. Notably, RSA enables Qwen3-4B-Instruct-2507 to achieve competitive performance with larger reasoning models, including DeepSeek-R1 and o3-mini (high), while outperforming purely parallel and sequential scaling strategies across AIME-25, HMMT-25, Reasoning Gym, LiveCodeBench-v6, and SuperGPQA. We further demonstrate that training the model to combine solutions via a novel aggregation-aware reinforcement learning approach yields significant performance gains. Code is available <a href=https://github.com/HyperPotatoNeo/RSA>here</a>.</p>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<hr />
+
+<!-- ===================================================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Recursive Self-Aggregation</h2>
+    <div class="content has-text-centered">
+      <img src="./static/images/rsa_diagram.png" alt="RSA diagram" style="max-width:100%; display: block; margin: 0 auto;"/>
+      <p><strong>RSA</strong> generates a population of $N$ solutions for a given prompt and recursively updates them over $T$ steps. Each step subsamples $K$ distinct solutions from the current population and generates an improved solution. </p>
+    </div>
+    <hr />
+    <div class="content">  
+      <p>
+        During post-training, LLMs are trained with reinforcement learning (RL)
+        to improve their reasoning ability. RL training does not account
+        for test-time scaling, which in this case is the task of aggregating multiple reasoning chains. In fact,
+        we observe that standard RL fine-tuning can even degrade performance relative to the base model
+        when combined with test-time aggregation. To address this, we propose an aggregation-aware
+        RL approach using a simple data-augmentation strategy to train LLMs to aggregate solutions.
+      </p>
+
+      <p>
+        We present <emph>Recursive Self-Aggregation (RSA)</emph>, a hybrid test-time scaling procedure designed 
+        to improve the model's performance without complex scaffolding or using external verifiers. It frames 
+        reasoning as a form of evolutionary process where candidate reasoning chains are iteratively refined 
+        through self-aggregation, inspired by the crossover and mutation steps in genetic algorithms. 
+      </p>
+      <p>
+        RSA is simple to implement and leads to substantial improvements in reasoning abilities across different
+         models and tasks, when compared to pure sequential or parallel scaling. 
+      </p>
+
+      <ol>
+        <li><strong>Population of trajectories. </strong>
+          At any given step $t$, RSA maintains a population of $N$ independent candidate solutions $\mathcal{P}_t$. 
+          The initial population $\mathcal{P}_1$ is generated by sampling $N$ responses for query $\mathbf{x}$ using the LLM $p_{\theta}$.
+            <!-- $$
+            \tau_i^{(1)} \sim p_{\theta}(\,\cdot \mid \mathbf{x}), \quad \mathcal{P}_{1} = \{\tau_1^{(1)}, \dots, \tau_N^{(1)}\}.
+            $$ -->
+        </li>
+        <li><strong>Subsampling. </strong>
+          We form $N$ aggregation sets of $K$ candidates, where each set is sampled uniformly without replacement from the population.
+          <!-- $$
+          \mathcal{S}_t = \{ S_1^{(t)}, S_2^{(t)}, \dots, S_N^{(t)} \}, \quad S_i^{(t)} \subseteq \mathcal{P}_t, \ |S_i^{(t)}| = K.
+          $$ -->
+        </li>
+        <li><strong>Aggregation. </strong>
+          Each set of candidates and the query $\mathbf{x}$ is formatted using an aggregation prompt directing the LLM 
+          $p_{\theta}$ to generate a refined response $\tau_{i}^{(t+1)}$, forming a new population of candidates $\mathcal{P}_{t+1}$.
+          <!-- $$
+          \tau_i^{(t+1)} \sim p_{\theta}(\,\cdot \mid S_i^{(t)},\mathbf{x}), \quad \mathcal{P}_{t+1} = \{\tau_1^{(t+1)}, \dots, \tau_N^{(t+1)}\}.
+          $$ -->
+          RSA recursively updates the population $\mathcal{P}_t$ using subsampling and aggregation for $t=1,\dots,T-1$. <strong>This sequential 
+          loop is expected to allow errors and inconsistencies to be gradually pruned away during aggregation, while preserving favorable 
+          reasoning patterns.</strong> Consequently, we expect overall diversity within the population to generally decrease as $t$ increases, 
+          accompanied by a monotonic improvement in success rate.
+        </li>
+        <li><strong>Termination. </strong>
+          Given the final population of candidate solutions $\mathcal{P}_T$, the solution is obtained either by randomly sampling 
+          from this population or by majority voting. We use uniform random sampling in all our experiments, to evaluate our method 
+          without any special selection mechanism.
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+<hr />
+
+<!-- ===================================================== -->
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Results</h2>
+    <div class="content">
+      We evaluate RSA across <strong>four</strong> benchmark categories:
+      <ul>
+        <li><strong>Math. </strong>We use AIME-25 and HMMT-25 from MathArena, each containing
+          $30$ challenging competition-level math problems.</li>
+        <li><strong>General reasoning. </strong>We construct two datasets with $100$ problems each from Reasoning Gym, 
+          using tasks from the games category (long-term planning), and cognition + ARC categories (pattern recognition).</li>
+        <li><strong>Code generation. </strong>We use LiveCodeBench-v6 which contains 1055 problems.</li>
+        <li><strong>Knowledge-based reasoning. </strong>We use SuperGPQA, a graduate-level
+          knowledge-based reasoning benchmark, to test effectiveness of RSA on tasks requiring factual recall. Given the 
+          large dataset size, we evaluate on 1000 randomly chosen multiple-choice questions.</li>
+      </ul>
+        </div>
+    <br>
+    <h4 class="title is-5">Comparison with other test-time scaling methods</h4>
+    <p>RSA outperforms several test-time scaling methods, including both sequential scaling methods like self-refinement and parallel scaling methods like 
+      majority voting and Best-of-N with self-verification. RSA also beats single step self-aggregation (setting $T=1$) by a considerable margin, highlighting 
+      that <strong>sequential improvement is an important component</strong> of this method.
+    </p>
+    <br>
+    <div class="content has-text-centered">
+      <img src="./static/images/table.png" alt="RSA leads to monotonic improvements with more compute" style="width: 100%; height: auto; display: block; margin: 0 auto;"/>
+      <p>We report Pass@$1$ scores for RSA and other test-time scaling baselines for Qwen3-4B-Instruct-2507. RSA results obtained with aggregation size $K=4$, population size $N=16$, run for $T=10$ steps. 
+        Majority-voting and rejection-sampling are budget-matched with RSA. Results are averaged over 4 seeds for all tasks except SuperGPQA, where we use 1 seed.</p>
+        </div>
+    <br>
+    <h4 class="title is-5">RSA yields consistent gains across different models</h4>
+    <p>We apply RSA to a diverse set of instruction-tuned models spanning a wide range of parameter counts, architectures, and reasoning abilities, including 
+      long chain-of-thought “thinking” models, sparse Mixture-of-Experts (MoE) architectures, and hybrid state-space models. 
+    </p>
+    <br>
+    <div class="content has-text-centered">
+      <img src="./static/images/models.png" alt="RSA leads to monotonic improvements with more compute" style="width: 100%; height: auto; display: block; margin: 0 auto;"/>
+      <p>RSA leads to substantial improvements on all tasks across a wide range of models.</p>
+        </div>
+    <br>
+    <h4 class="title is-5">RSA scales effectively with more compute</h4>
+    <p>An ideal test-time scaling method yields monotonic improvements with more compute. We scale RSA along two axes: the sequential depth (number of iterations) 
+      and aggregation set size (number of candidates aggregated). We see that RSA scales effectively with both hyperparameters across tasks. 
+      Moving from $K=1$, which corresponds to single-trajectory refinement, to $K=2$ results in a large improvement, highlighting that <strong>aggregating multiple 
+      solutions is a crucial component</strong>. 
+    </p>
+    <br>
+    <div class="content has-text-centered">
+      <img src="./static/images/ablation_K.png" alt="RSA leads to monotonic improvements with more compute" style="width: 100%; height: auto; display: block; margin: 0 auto;"/>
+      <p>RSA leads to monotonic improvement with more compute along two axes: scaling number of iteration steps and scaling the aggregation set size. Results on Qwen3-4B-Instruct-2507.</p>
+    </div>
+  </div>
+</section>
+<hr />
+
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Aggregation-aware RL</h2>
+    <div class="content">
+      <p>
+        Reinforcement learning (RL) improves the model’s ability to directly generate correct solutions, but does not explicitly teach 
+        the model how to aggregate multiple candidate solutions. As we show in our results, this mismatch between the training objective 
+        and the test-time strategy can result in <em>worse</em> performance compared to the base (reference) model when using RSA.
+      </p>
+      <p>
+        To better align training and inference, we formulate the task of aggregation as an RL problem. The reference model 
+        $p_{\theta}$ generates a set of candidate reasoning chains given a problem. Next, the model is trained to produce 
+        a single correct reasoning chain given the problem and the set of candidate reasoning chains. To achieve this in practice, 
+        we create an <em>aggregation-aware</em> training dataset consisting of two types of prompts: (1) <strong>Standard prompts</strong>, 
+        containing only the problem, to train the model to propose good initial candidate reasoning chains; and (2) 
+        <strong>aggregation prompts</strong>, which include the problem along with $K$ candidate solutions from the reference model, 
+        formatted with the same aggregation prompt used for RSA.
+      </p>
+    <br>
+    <div class="content has-text-centered">
+      <img src="./static/images/rl_results.png" alt="Our proposed aggregation-aware RL improves RSA performance" style="width: 100%; height: auto; display: block; margin: 0 auto;"/>
+      <p>Performance across RSA steps for the base, standard RL, and aggregation-aware RL policies
+        with Qwen3-4B-Instruct-2507. Standard RL training generally hurts performance when using
+        RSA, whereas aggregation-aware training leads to marked improvement on most tasks..</p>
+      </div>
+  </div>
+</section>
+<hr />
+
+<!-- ===================================================== -->
+<!-- BIBTEX                                               -->
+<!-- ===================================================== -->
+<!-- <section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{jain2025diffusiontreesampling,
+      title={Diffusion Tree Sampling: Scalable inference-time alignment of diffusion models}, 
+      author={Vineet Jain and Kusha Sareen and Mohammad Pedramfar and Siamak Ravanbakhsh},
+      journal={arXiv preprint arXiv:2506.20701},
+      year={2025}
+}
+</code></pre>
+  </div>
+</section> -->
+
+<!-- ===================================================== -->
+<!-- FOOTER                                               -->
+<!-- ===================================================== -->
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <!-- PDF link icon -->
+      <a class="icon-link" href="./static/pdfs/Recursive_Self_Aggregation.pdf"><i class="fas fa-file-pdf"></i></a>
+      <a class="icon-link" href="https://github.com/HyperPotatoNeo/RSA"><i class="fab fa-github"></i></a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>This site is adapted from the <a href="https://github.com/nerfies/nerfies.github.io">Nerfies template</a>. Feel free to reuse it—just link back to this page in your footer.</p>
+          <p>Licensed under <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">CC BY‑SA 4.0</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- JavaScript for Slider -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const slider = document.getElementById('interpolation-slider');
+  const image = document.getElementById('diagram-image');
+  
+  if (slider && image) {
+  function updateSlider() {
+    const value = parseInt(slider.value);
+    const step = value.toString().padStart(3, '0');
+    image.src = `./static/images/diagram_diff.${step}.png`;
+    image.alt = `Scaling inference budget - ${value === 1 ? '1,000' : value === 2 ? '2,500' : value === 3 ? '5,000' : value === 4 ? '10,000' : value === 5 ? '25,000' : value === 6 ? '50,000' : '100,000'} NFEs`;
+  }
+  slider.addEventListener('input', updateSlider);
+  }
+  
+  // Handle collapsible sections arrow rotation
+  const detailsElements = document.querySelectorAll('details');
+  detailsElements.forEach(details => {
+    const arrow = details.querySelector('.collapse-arrow');
+    if (arrow) {
+      details.addEventListener('toggle', function() {
+        if (this.open) {
+          arrow.style.transform = 'translateY(-50%) rotate(180deg)';
+        } else {
+          arrow.style.transform = 'translateY(-50%) rotate(0deg)';
+        }
+      });
+    }
+  });
+});
+</script>
+
+</body>
+</html>
