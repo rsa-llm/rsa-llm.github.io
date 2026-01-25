@@ -5,8 +5,7 @@
   <!-- ===================================================== -->
   <!-- Basic meta tags – fill in the social banners later.  -->
   <!-- ===================================================== -->
-  <meta name="viewport"    content="width=device-width, initial-scale=1">
-  <meta name="viewport"    content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- ===================================================== -->
   <!-- SEO Meta Tags                                         -->
@@ -93,6 +92,7 @@
 
   <!-- JS Deps -->
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
@@ -360,10 +360,13 @@
                   <span class="icon"><i class="fas fa-file-pdf"></i></span><span>Paper</span></a>
               </span>
               <span class="link-block">
+                <a href="https://x.com/siddarthv66/status/1971757612845670585?s=20" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="fab fa-twitter"></i></span><span>Tweet</span></a>
+              </span>
+              <span class="link-block">
                 <a href="https://github.com/HyperPotatoNeo/RSA" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="fab fa-github"></i></span><span>Code</span></a>
               </span>
               <span class="link-block">
-                <a href="./static/pdfs/Recursive_Self_Aggregation.pdf" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv (coming soon)</span></a>
+                <a href="https://arxiv.org/abs/2509.26626" class="external-link button is-normal is-rounded is-dark"><span class="icon"><i class="ai ai-arxiv"></i></span><span>arXiv</span></a>
               </span>
             </div>
           </div>
@@ -373,6 +376,259 @@
     </div>
   </div>
 </section>
+
+<!-- ===================================================== -->
+<section class="hero teaser">
+  <div class="hero-body">
+    <div class="has-text-centered" style="padding: 0rem 0;">
+      <!-- <video id="teaser" autoplay muted loop playsinline style="width: 80vw; max-width: 1400px; height: auto; display: block; margin: 0 auto;">
+        <img src="./static/images/main_results.png">
+      </video> -->
+      <style>
+        #arc-leaderboard-chart {
+          width: min(100%, 1100px);
+          height: clamp(360px, 70vh, 760px);
+          margin: 12px auto;
+        }
+        @media (max-width: 720px) {
+          #arc-leaderboard-chart {
+            width: calc(100% - 24px);
+            height: clamp(360px, 58vh, 520px);
+            margin: 12px auto;
+          }
+          /* Allow vertical scrolling on mobile by not capturing touch events */
+          #arc-leaderboard-chart .plotly,
+          #arc-leaderboard-chart .js-plotly-plot {
+            touch-action: pan-y !important;
+          }
+        }
+      </style>
+      <div class="content has-text-centered">
+        <div id="arc-leaderboard-chart"></div>
+      </div>
+      <script>
+        (function () {
+          if (!window.Plotly) {
+            console.warn('Plotly is not loaded; ARC plot will not render.');
+            return;
+          }
+
+          const nonRsa = {
+            labels: ["", "Gemini 2.5 Pro", "", "", "", "", "", "", "", "", "", "", "", "Gemini 3 Flash", "Gemini 3 Pro", "Gemini 3 Deep Think", "", ""],
+            labelsSmall: ["", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""],
+            models: ["o3-pro-2025-06-10-high", "gemini-2-5-pro-2025-06-17-thinking-32k", "grok-4-0709", "claude-sonnet-4-5-20250929-thinking-32k", "gpt-5-pro-2025-10-06", "trm-2025-10-07", "claude-haiku-4-5-20251001-thinking-32k", "grok-4-fast-reasoning", "gpt-5-1-2025-11-13-thinking-high", "claude-opus-4-5-20251101-thinking-32k", "gpt-5-2-2025-12-11-thinking-high", "gpt-5-2-2025-12-11-thinking-xhigh", "gpt-5-2-pro-2025-12-11-high", "gemini-3-flash-preview-thinking-high", "gemini-3-pro", "gemini-3-deep-think", "gemini-3-poetiq-mix", "poetiq-gemini-3c"],
+            costs: [9.1492, 0.7628, 2.0759, 0.8403, 8.0107, 1.8, 0.3927, 0.0614, 1.2166, 1.37, 1.4903, 2.054, 16.662, 0.1278, 0.849, 77.16, 30.568, 14.24],
+            scores: [0.0389, 0.0458, 0.2115, 0.1472, 0.1333, 0.05, 0.0514, 0.0458, 0.1833, 0.2815, 0.3992, 0.5981, 0.5168, 0.3778, 0.2736, 0.461, 0.6532, 0.6014],
+            colors: ["#6a4c93", "#4c78a8", "#d1495b", "#7ccba2", "#8ea2c6", "#7a7a7a", "#7ccba2", "#d1495b", "#b7c5e0", "#7ccba2", "#9db4d8", "#9db4d8", "#9db4d8", "#2f6fed", "#2f6fed", "#2f6fed", "#8b5a2b", "#8b5a2b"],
+            sizes: [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16],
+            symbols: ["circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle", "circle"],
+            opacities: [0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6, 0.6],
+            customdata: [{"label": "o3 Pro High", "model": "o3-pro-2025-06-10-high", "cost": 9.1492, "score": 0.0389, "family": "o3 Pro"}, {"label": "Gemini 2.5 Pro", "model": "gemini-2-5-pro-2025-06-17-thinking-32k", "cost": 0.7628, "score": 0.0458, "family": "Gemini 2.5"}, {"label": "Grok 4 (0709)", "model": "grok-4-0709", "cost": 2.0759, "score": 0.2115, "family": "Grok 4"}, {"label": "Claude Sonnet 4.5", "model": "claude-sonnet-4-5-20250929-thinking-32k", "cost": 0.8403, "score": 0.1472, "family": "Claude"}, {"label": "GPT-5 Pro", "model": "gpt-5-pro-2025-10-06", "cost": 8.0107, "score": 0.1333, "family": "GPT-5 Pro"}, {"label": "TRM", "model": "trm-2025-10-07", "cost": 1.8, "score": 0.05, "family": "TRM"}, {"label": "Claude Haiku 4.5", "model": "claude-haiku-4-5-20251001-thinking-32k", "cost": 0.3927, "score": 0.0514, "family": "Claude"}, {"label": "Grok 4 Fast Reasoning", "model": "grok-4-fast-reasoning", "cost": 0.0614, "score": 0.0458, "family": "Grok 4"}, {"label": "GPT-5.1 High", "model": "gpt-5-1-2025-11-13-thinking-high", "cost": 1.2166, "score": 0.1833, "family": "GPT-5.1"}, {"label": "Claude Opus 4.5", "model": "claude-opus-4-5-20251101-thinking-32k", "cost": 1.37, "score": 0.2815, "family": "Claude"}, {"label": "GPT-5.2 High", "model": "gpt-5-2-2025-12-11-thinking-high", "cost": 1.4903, "score": 0.3992, "family": "GPT-5.2"}, {"label": "GPT-5.2 XHigh", "model": "gpt-5-2-2025-12-11-thinking-xhigh", "cost": 2.054, "score": 0.5981, "family": "GPT-5.2"}, {"label": "GPT-5.2 Pro High", "model": "gpt-5-2-pro-2025-12-11-high", "cost": 16.662, "score": 0.5168, "family": "GPT-5.2"}, {"label": "Gemini 3 Flash", "model": "gemini-3-flash-preview-thinking-high", "cost": 0.1278, "score": 0.3778, "family": "Gemini 3"}, {"label": "Gemini 3 Pro", "model": "gemini-3-pro", "cost": 0.849, "score": 0.2736, "family": "Gemini 3"}, {"label": "Gemini 3 Deep Think", "model": "gemini-3-deep-think", "cost": 77.16, "score": 0.461, "family": "Gemini 3"}, {"label": "Poetiq (Mix)", "model": "gemini-3-poetiq-mix", "cost": 30.568, "score": 0.6532, "family": "Poetiq"}, {"label": "Poetiq Gemini-3c", "model": "poetiq-gemini-3c", "cost": 14.24, "score": 0.6014, "family": "Poetiq"}],
+            textpositions: ["top right", "top right", "top right", "top right", "top right", "top right", "top right", "top right", "top right", "top right", "top right", "top left", "top right", "top right", "top right", "top right", "top right", "bottom right"],
+          };
+
+          const rsa = {
+            labels: ["RSA High (Gemini 3 Flash)", "RSA Low (Gemini 3 Flash)", "RSA Medium (Gemini 3 Flash)"],
+            labelsSmall: ["RSA High (Gemini 3 Flash)", "RSA Low (Gemini 3 Flash)", "RSA Medium (Gemini 3 Flash)"],
+            models: ["gemini-3-flash-rsa", "gemini-3-flash-rsa-low", "gemini-3-flash-rsa-medium"],
+            costs: [7.1674240000000005, 1.7290240000000001, 3.7889280000000003],
+            scores: [0.5931, 0.4722, 0.5597],
+            colors: ["#ff8f3d", "#ff8f3d", "#ff8f3d"],
+            sizes: [20, 20, 20],
+            symbols: ["diamond", "diamond", "diamond"],
+            opacities: [1.0, 1.0, 1.0],
+            customdata: [{"label": "RSA High (Gemini 3 Flash)", "model": "gemini-3-flash-rsa", "cost": 7.1674240000000005, "score": 0.5931, "family": "Gemini 3"}, {"label": "RSA Low (Gemini 3 Flash)", "model": "gemini-3-flash-rsa-low", "cost": 1.7290240000000001, "score": 0.4722, "family": "Gemini 3"}, {"label": "RSA Medium (Gemini 3 Flash)", "model": "gemini-3-flash-rsa-medium", "cost": 3.7889280000000003, "score": 0.5597, "family": "Gemini 3"}],
+            textpositions: ["top center", "top right", "bottom center"],
+          };
+
+          const rsaLineTrace = {
+            type: "scatter",
+            mode: "lines",
+            x: [0.1278, 1.7290240000000001, 3.7889280000000003, 7.1674240000000005],
+            y: [0.3778, 0.4722, 0.5597, 0.5931],
+            line: { color: "#ff8f3d", width: 2.8, dash: "dash" },
+            hoverinfo: "skip",
+            showlegend: false,
+          };
+
+          const nonRsaTrace = {
+            type: "scatter",
+            mode: "markers+text",
+            x: nonRsa.costs,
+            y: nonRsa.scores,
+            text: nonRsa.labels,
+            textposition: nonRsa.textpositions,
+            cliponaxis: false,
+            textfont: { size: 14, color: "#111827" },
+            customdata: nonRsa.customdata,
+            hovertemplate:
+              "<b>%{customdata.label}</b><br>" +
+              "Model: %{customdata.model}<br>" +
+              "Family: %{customdata.family}<br>" +
+              "Score: %{customdata.score:.2%}<br>" +
+              "Cost: $%{customdata.cost:.4g}<extra></extra>",
+            marker: {
+              color: nonRsa.colors,
+              size: nonRsa.sizes,
+              symbol: nonRsa.symbols,
+              opacity: nonRsa.opacities,
+              line: { color: "#ffffff", width: 1 },
+            },
+            showlegend: false,
+          };
+
+          const rsaTrace = {
+            type: "scatter",
+            mode: "markers+text",
+            x: rsa.costs,
+            y: rsa.scores,
+            text: rsa.labels,
+            textposition: rsa.textpositions,
+            cliponaxis: false,
+            textfont: {
+              size: 17,
+              family: "IBM Plex Sans SemiBold, IBM Plex Sans, Segoe UI, Roboto, Arial, sans-serif",
+              color: "#111827",
+            },
+            customdata: rsa.customdata,
+            hovertemplate:
+              "<b>%{customdata.label}</b><br>" +
+              "Model: %{customdata.model}<br>" +
+              "Family: %{customdata.family}<br>" +
+              "Score: %{customdata.score:.2%}<br>" +
+              "Cost: $%{customdata.cost:.4g}<extra></extra>",
+            marker: {
+              color: rsa.colors,
+              size: rsa.sizes,
+              symbol: rsa.symbols,
+              opacity: rsa.opacities,
+              line: { color: "#ffffff", width: 1 },
+            },
+            showlegend: false,
+          };
+
+          const layout = {
+            title: { text: "ARC-AGI v2 Public Eval", x: 0.02, xanchor: "left", font: { size: 20 } },
+            margin: { l: 70, r: 110, t: 60, b: 70 },
+            paper_bgcolor: "#ffffff",
+            plot_bgcolor: "#ffffff",
+            xaxis: {
+              title: { text: "Cost per Task ($)" },
+              type: "log",
+              range: [-1.2918316288588323, 2.0673922189718468],
+              tickmode: "array",
+              tickvals: [0.01, 0.1, 1, 10, 100],
+              ticktext: ["0.01", "0.1", "1", "10", "100"],
+              gridcolor: "rgba(17, 24, 39, 0.08)",
+              zeroline: false,
+            },
+            yaxis: {
+              title: { text: "Score" },
+              range: [0, 0.7],
+              tickformat: ".0%",
+              gridcolor: "rgba(17, 24, 39, 0.12)",
+              zeroline: false,
+            },
+            dragmode: false,
+            shapes: [
+              {
+                type: "line",
+                xref: "paper",
+                yref: "y",
+                x0: 0,
+                x1: 1,
+                y0: 0.60,
+                y1: 0.60,
+                line: { color: "rgba(107, 114, 128, 0.9)", width: 1.4, dash: "dash" },
+              },
+            ],
+            annotations: [
+              {
+                xref: "paper",
+                yref: "y",
+                x: 0.02,
+                y: 0.60,
+                text: "<i>Average Human Test Taker</i>",
+                showarrow: false,
+                xanchor: "left",
+                yanchor: "bottom",
+                font: { size: 12, color: "rgba(107, 114, 128, 1)" },
+              },
+            ],
+          };
+
+          const config = {
+            responsive: true,
+            displaylogo: false,
+            scrollZoom: false,
+            modeBarButtonsToRemove: ["zoom2d", "pan2d", "select2d", "lasso2d", "zoomIn2d", "zoomOut2d", "autoScale2d"],
+          };
+
+          const mobileConfig = { ...config, staticPlot: false, displayModeBar: false };
+
+          const mergeLayouts = (base, overrides) => {
+            const result = { ...base, ...overrides };
+            if (base.xaxis && overrides.xaxis) result.xaxis = { ...base.xaxis, ...overrides.xaxis };
+            if (base.yaxis && overrides.yaxis) result.yaxis = { ...base.yaxis, ...overrides.yaxis };
+            return result;
+          };
+
+          const smallScreenLayout = {
+            title: { text: "ARC-AGI v2 Public Eval", font: { size: 14 }, x: 0.5, xanchor: "center" },
+            margin: { l: 50, r: 20, t: 40, b: 50 },
+            xaxis: { title: { text: "Cost per task ($)", font: { size: 10 } }, tickfont: { size: 9 }, fixedrange: true },
+            yaxis: { title: { text: "Score (%)", font: { size: 10 } }, tickfont: { size: 9 }, fixedrange: true },
+            annotations: layout.annotations.map((ann) => ({ ...ann, font: { ...ann.font, size: 9 }, x: 0.5, xanchor: "center" })),
+          };
+
+          const buildData = (useSmall) => {
+            const markerSizeScale = useSmall ? 0.7 : 1;
+            const nonRsaTraceLocal = {
+              ...nonRsaTrace,
+              text: useSmall ? [] : nonRsa.labels,
+              mode: useSmall ? "markers" : "markers+text",
+              marker: { ...nonRsaTrace.marker, size: nonRsa.sizes.map((s) => s * markerSizeScale) },
+            };
+            const rsaTraceLocal = {
+              ...rsaTrace,
+              text: rsa.labelsSmall,
+              mode: "markers+text",
+              textfont: useSmall ? { ...rsaTrace.textfont, size: 10 } : rsaTrace.textfont,
+              marker: { ...rsaTrace.marker, size: rsa.sizes.map((s) => s * markerSizeScale) },
+            };
+            return [rsaLineTrace, nonRsaTraceLocal, rsaTraceLocal];
+          };
+
+          const isSmallScreen = window.matchMedia("(max-width: 720px)").matches;
+
+          Plotly.newPlot(
+            "arc-leaderboard-chart",
+            buildData(isSmallScreen),
+            isSmallScreen ? mergeLayouts(layout, smallScreenLayout) : layout,
+            isSmallScreen ? mobileConfig : config
+          );
+
+          window.addEventListener("resize", () => {
+            const shouldUseSmall = window.matchMedia("(max-width: 720px)").matches;
+            Plotly.react(
+              "arc-leaderboard-chart",
+              buildData(shouldUseSmall),
+              shouldUseSmall ? mergeLayouts(layout, smallScreenLayout) : layout,
+              shouldUseSmall ? mobileConfig : config
+            );
+          });
+        })();
+      </script>
+    </div>
+    <div class="container is-max-desktop">
+      <h3 class="subtitle has-text-centered">
+        <strong>Recursive Self-Aggregation (RSA) substantially improves Pass@$1$ across tasks and model architectures.</strong> RSA enables the much smaller Qwen3-4B-Instruct-2507 to match the performance of larger reasoning models such as DeepSeek-R1 and o3-mini (high). These gains are further amplified through our proposed aggregation-aware RL framework.
+      </h3>
+    </div>
+  </div>
+</section>
+<hr/>
+
 
 <!-- ===================================================== -->
 <section class="hero teaser">
