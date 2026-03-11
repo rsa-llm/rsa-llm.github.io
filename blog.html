@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Pushing the Frontiers of Self-Aggregation</title>
+  <meta name="description" content="We probe the limits of Recursive Self-Aggregation on challenging reasoning benchmarks and demonstrate its broad applicability.">
+  <meta name="author" content="RSA Team">
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Roboto:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- MathJax -->
+  <script type="text/javascript">
+    window.MathJax = {
+      tex: {
+        tags: 'ams',
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']]
+      }
+    };
+  </script>
+  <script defer type="text/javascript" id="MathJax-script"
+    src="https://cdn.jsdelivr.net/npm/mathjax@3.2.0/es5/tex-mml-chtml.js">
+  </script>
+
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <style>
+    /* ============================================================
+       Global
+    ============================================================ */
+    :root {
+      --theme:   #2698ba;
+      --text:    rgba(0,0,0,.85);
+      --text-2:  rgba(0,0,0,.67);
+      --text-3:  rgba(0,0,0,.50);
+      --divider: rgba(0,0,0,.10);
+      --bg:      #fff;
+      --code-bg: rgba(0,0,0,.04);
+      --sans:    'Roboto', -apple-system, BlinkMacSystemFont, Helvetica, sans-serif;
+      --serif:   Georgia, 'Times New Roman', serif;
+    }
+
+    html { font-size: 16px; }
+    @media (min-width: 1024px) { html { font-size: 18px; } }
+
+    body {
+      font-family: var(--sans);
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a            { color: var(--theme); }
+    a:hover      { color: var(--theme); text-decoration: underline; }
+    strong       { font-weight: 500; }
+
+    code {
+      font-size: .82em;
+      color: var(--theme);
+      background: var(--code-bg);
+      border-radius: 3px;
+      padding: 2px 5px;
+    }
+
+    /* ============================================================
+       Centred column — 800px, same for text AND figures
+    ============================================================ */
+    .post-wrap {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ============================================================
+       Article title block  (mimics d-title)
+    ============================================================ */
+    .d-title {
+      padding: 3rem 0 0;
+      border-bottom: 1px solid var(--divider);
+      margin-bottom: 0;
+    }
+
+    .d-title h1 {
+      font-family: 'Google Sans', var(--sans);
+      font-size: 2.4rem;
+      font-weight: 700;
+      line-height: 1.2;
+      color: var(--text);
+      margin-bottom: .75rem;
+    }
+
+    .d-title .lead {
+      font-size: 1rem;
+      font-weight: 300;
+      color: var(--text-2);
+      line-height: 1.6;
+      margin-bottom: 2rem;
+    }
+
+    /* ============================================================
+       Byline  (mimics d-byline)
+    ============================================================ */
+    .d-byline {
+      padding: .9rem 0 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      border-bottom: 1px solid var(--divider);
+      font-size: .82rem;
+      color: var(--text-3);
+    }
+
+    .d-byline__authors { color: var(--text-2); font-weight: 400; }
+    .d-byline__date    { color: var(--text-3); }
+
+    .d-byline__btn {
+      font-size: .75rem;
+      font-weight: 500;
+      color: var(--theme);
+      border: 1px solid var(--theme);
+      border-radius: 3px;
+      padding: 3px 10px;
+      text-decoration: none;
+      transition: background .15s, color .15s;
+    }
+    .d-byline__btn:hover {
+      background: var(--theme);
+      color: #fff;
+      text-decoration: none;
+    }
+
+    /* ============================================================
+       Article body  (mimics d-article)
+    ============================================================ */
+    .d-article {
+      padding-top: 2rem;
+      padding-bottom: 5rem;
+      border-top: 1px solid var(--divider);
+    }
+
+    .d-article p {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--text);
+      margin-bottom: 1.1em;
+    }
+
+    .d-article h2 {
+      font-family: var(--sans);
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      margin-top: 2.8em;
+      margin-bottom: .65em;
+      padding-bottom: .3em;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .d-article h2:first-child { margin-top: 0; }
+
+    .d-article h3 {
+      font-family: var(--sans);
+      font-size: 1.15rem;
+      font-weight: 700;
+      font-style: italic;
+      color: var(--text);
+      margin-top: 2.2em;
+      margin-bottom: .5em;
+    }
+
+    .d-article ul,
+    .d-article ol {
+      padding-left: 1.6em;
+      margin-bottom: 1.1em;
+    }
+
+    .d-article li {
+      line-height: 1.7;
+      margin-bottom: .4em;
+    }
+
+    /* ============================================================
+       Math — MathJax display equations
+    ============================================================ */
+    .d-article .MJX-TEX { font-size: 1rem; }
+
+    /* display math block breathing room */
+    .d-article mjx-container[display="true"] {
+      margin: 1.4em 0 !important;
+      overflow-x: auto;
+    }
+
+    /* tighter inside algorithm box */
+    .alg-box mjx-container[display="true"] {
+      margin: .7em 0 !important;
+    }
+
+    /* ============================================================
+       Algorithm box
+    ============================================================ */
+    .alg-box {
+      margin: 1.8em 0;
+      border: 1px solid var(--divider);
+      border-radius: 4px;
+      overflow: hidden;
+      font-size: .95rem;
+    }
+
+    .alg-box__head {
+      background: rgba(0,0,0,.03);
+      border-bottom: 1px solid var(--divider);
+      padding: 6px 16px;
+      font-size: .7rem;
+      font-weight: 500;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: var(--text-3);
+    }
+
+    .alg-box__body {
+      padding: 14px 18px 16px;
+      line-height: 1.65;
+    }
+
+    .alg-box__body p   { margin-bottom: .5em; }
+    .alg-box__body ol  { padding-left: 1.4em; margin: .5em 0; }
+    .alg-box__body li  { margin-bottom: .4em; }
+
+    /* ============================================================
+       Figures — same 800px column as text
+    ============================================================ */
+    .d-article figure {
+      margin: 2.2em 0;
+    }
+
+    .d-article figure img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border-radius: 4px;
+      box-shadow: 0 1px 8px rgba(0,0,0,.12);
+    }
+
+    .d-article figcaption,
+    .d-article .caption {
+      margin-top: .6rem;
+      font-size: .82rem;
+      color: var(--text-3);
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .d-article figcaption b,
+    .d-article .caption b {
+      color: var(--text-2);
+      font-weight: 500;
+    }
+
+    /* ============================================================
+       Video
+    ============================================================ */
+    .video-wrap {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      margin: 1.8em 0;
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--divider);
+    }
+    .video-wrap iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ============================================================
+       Note / callout
+    ============================================================ */
+    .callout {
+      margin: 1.8em 0;
+      padding: 12px 16px;
+      background: #fffcf2;
+      border-left: 2px solid var(--theme);
+      font-size: .88rem;
+      line-height: 1.6;
+      color: var(--text-2);
+    }
+    .callout strong { font-weight: 500; }
+
+    /* ============================================================
+       Rule
+    ============================================================ */
+    .d-rule {
+      border: none;
+      border-top: 1px solid var(--divider);
+      margin: 3em 0;
+    }
+
+    /* ============================================================
+       Footer
+    ============================================================ */
+    .d-footer {
+      border-top: 1px solid var(--divider);
+      padding: 24px 0;
+    }
+    .d-footer .post-wrap {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .d-footer p {
+      font-size: .76rem;
+      color: var(--text-3);
+      margin: 0;
+    }
+    .d-footer a { color: var(--text-3); }
+    .d-footer a:hover { color: var(--theme); }
+
+    /* ============================================================
+       Responsive
+    ============================================================ */
+    @media (max-width: 600px) {
+      .d-title h1 { font-size: 1.8rem; }
+      .d-article h2 { font-size: 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     Title
+============================================================ -->
+<div class="post-wrap">
+  <div class="d-title">
+    <h1>Pushing the Frontiers of&nbsp;Self&#8209;Aggregation</h1>
+    <p class="lead">
+      We probe the limits of Recursive Self-Aggregation on challenging reasoning
+      benchmarks and demonstrate its broad applicability.
+    </p>
+  </div>
+
+  <div class="d-byline">
+    <span class="d-byline__authors">RSA Team</span>
+    <span class="d-byline__date">March 2026</span>
+    <a class="d-byline__btn" href="https://arxiv.org/abs/2509.26626" target="_blank" rel="noopener">arXiv &nearr;</a>
+  </div>
+</div>
+
+<!-- ============================================================
+     Article
+============================================================ -->
+<div class="post-wrap">
+<div class="d-article">
+
+  <p>
+    The frontier for improving LLM reasoning has moved towards scaling compute at test time.
+    Test-time compute is typically controlled through <em>harnesses</em> &mdash; external control
+    flows that orchestrate multiple model generations. In single-turn settings, harnesses fall
+    within two broad categories: <strong>parallel</strong> approaches that generate multiple
+    independent responses and combine them, and <strong>sequential</strong> approaches that
+    iteratively refine a single candidate. In our work
+    <a href="https://arxiv.org/abs/2509.26626" target="_blank" rel="noopener">Recursive
+    Self-Aggregation</a>, we proposed a simple harness that combines the benefits of both.
+    In this post, we present new results on harder reasoning benchmarks, demonstrating
+    RSA's potential to tackle challenging practical reasoning problems across scientific
+    domains and mathematics.
+  </p>
+
+  <!-- ===================================================
+       Section 1
+  =================================================== -->
+  <h2>Quick Recap: What is RSA?</h2>
+
+  <div class="video-wrap">
+    <iframe
+      src="https://www.youtube.com/embed/5CUUFWdDwbs"
+      title="Recursive Self-Aggregation overview"
+      allowfullscreen
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture">
+    </iframe>
+  </div>
+
+  <p>
+    <strong>Recursive Self-Aggregation (RSA)</strong> is a hybrid test-time scaling strategy
+    that combines sequential and parallel components. The key idea is to use the model to
+    <em>aggregate</em> subsets of its own responses into a combined answer, then repeat this
+    recursively.
+  </p>
+
+  <p>
+    Given a query $x$ and a pretrained LLM $p_{\theta_\textrm{ref}}$, RSA maintains a population
+    of $N$ candidate solutions $\mathcal{P}_t$ at each step $t$. The model is given the question
+    together with $K$ solutions from the current population and prompted to produce a refined
+    answer, forming a new population $\mathcal{P}_{t+1}$.
+  </p>
+
+  <div class="alg-box">
+    <div class="alg-box__head">Algorithm &mdash; Recursive Self-Aggregation</div>
+    <div class="alg-box__body">
+      <p><strong>Initialization.</strong> Sample $N$ responses to form the initial population $\mathcal{P}_1$:</p>
+      $$\tau_i^{(1)} \sim p_{\theta_\textrm{ref}}(\,\cdot \mid x), \qquad \mathcal{P}_{1} = \bigl\{\tau_1^{(1)}, \dots, \tau_N^{(1)}\bigr\}.$$
+      <ol>
+        <li>
+          <strong>Form aggregation sets.</strong> Sample $N$ subsets of size $K$ without replacement from $\mathcal{P}_t$:
+          $$\mathcal{S}_t = \bigl\{S_1^{(t)}, \dots, S_N^{(t)}\bigr\}, \quad S_i^{(t)} \subseteq \mathcal{P}_t, \quad \lvert S_i^{(t)}\rvert = K.$$
+        </li>
+        <li>
+          <strong>Aggregate and refine.</strong> Prompt the LLM to produce a refined response from each aggregation set:
+          $$\tau_i^{(t+1)} \sim p_{\theta_\textrm{ref}}\!\left(\cdot \mid S_i^{(t)}, x\right), \qquad \mathcal{P}_{t+1} = \bigl\{\tau_1^{(t+1)}, \dots, \tau_N^{(t+1)}\bigr\}.$$
+        </li>
+      </ol>
+      <p>Repeat steps 1&ndash;2 for $t = 1, \dots, T{-}1$. The final answer is drawn from $\mathcal{P}_T$ by uniform sampling or majority voting.</p>
+    </div>
+  </div>
+
+  <p>
+    For full details and experiments see
+    <a href="https://arxiv.org/abs/2509.26626" target="_blank" rel="noopener">arxiv.org/abs/2509.26626</a>.
+  </p>
+
+  <hr class="d-rule">
+
+  <!-- ===================================================
+       Section 2: ARC-AGI-2
+  =================================================== -->
+  <h2>Pushing the Frontier on ARC-AGI-2</h2>
+
+  <p>
+    <a href="https://arcprize.org/" target="_blank" rel="noopener">ARC-AGI-2</a> is a benchmark
+    for evaluating reasoning in AI systems. The public evaluation set contains 120 tasks; each
+    provides a few training examples and one test instance. The goal is to infer a transformation
+    rule from the examples and apply it to the test. The benchmark targets symbolic interpretation,
+    compositional reasoning, and contextual rule application.
+  </p>
+
+  <p>
+    High-performing methods have typically combined language models with program synthesis and
+    domain-specific languages. We investigate whether RSA can push performance further &mdash;
+    RSA <strong>does not</strong> require access to any additional tools.
+  </p>
+
+  <p>
+    We run experiments with three frontier models: Gemini 3 Flash, Claude Sonnet 4.6, and Claude
+    Opus 4.6. For Gemini Flash we use $N{=}8$, $K{=}4$, $T{=}10$ (RSA High = 10 steps, Medium = 5,
+    Low = 3). For Sonnet and Opus 4.6 we use $K{=}4$, $T{=}3$ (RSA High: $N{=}16$; RSA Low:
+    $N{=}8$) due to cost constraints.
+  </p>
+
+  <figure>
+    <img src="./static/images/arc_agi2_results.png" alt="ARC-AGI-2 results">
+    <figcaption>
+      <b>Figure 1.</b> ARC-AGI-2 Public Eval. RSA improves every base model. Gemini 3 Flash
+      gains over 20%, matching the human baseline. Claude Opus 4.6 with RSA reaches 87% with no tool access.
+    </figcaption>
+  </figure>
+
+  <p>
+    RSA provides significant improvements across all three systems. Claude Sonnet 4.6 gains over
+    15% in just three steps. With Claude Opus 4.6 we reach 87% on the public set with no tool
+    access. RSA does increase computational cost substantially; improving its efficiency remains
+    an open direction.
+  </p>
+
+  <hr class="d-rule">
+
+  <!-- ===================================================
+       Section 3: FrontierScience
+  =================================================== -->
+  <h2>Improving Scientific Reasoning on Frontier Science</h2>
+
+  <p>
+    <a href="https://arxiv.org/abs/2601.21165" target="_blank" rel="noopener">FrontierScience</a>-Olympiad
+    contains short-answer questions at the difficulty of the International Physics, Chemistry, and
+    Biology Olympiads: 50 physics, 40 chemistry, and 10 biology problems.
+  </p>
+
+  <p>
+    RSA boosts performance by 7&ndash;18%, moving Sonnet 4.5 (no extended reasoning) toward
+    competitiveness with the best frontier models running at high reasoning effort.
+  </p>
+
+  <figure>
+    <img src="./static/images/frontierscience_sonnet45.png" alt="FrontierScience — Sonnet 4.5">
+    <figcaption>
+      <b>Figure 2.</b> FrontierScience-Olympiad with Claude Sonnet 4.5 (no extended reasoning).
+      RSA improves performance by 7&ndash;18% across physics, chemistry, and biology.
+    </figcaption>
+  </figure>
+
+  <p>
+    Switching to Sonnet 4.6 at high reasoning effort continues to yield gains, surpassing the
+    best-performing frontier models on the Biology subset. We only evaluated RSA with a
+    high-reasoning model on biology due to limited API credits; full results will follow.
+  </p>
+
+  <figure>
+    <img src="./static/images/frontierscience_sonnet46.png" alt="FrontierScience — Sonnet 4.6">
+    <figcaption>
+      <b>Figure 3.</b> FrontierScience-Olympiad biology with Claude Sonnet 4.6 (high reasoning
+      effort). RSA surpasses all evaluated frontier models on this subset.
+    </figcaption>
+  </figure>
+
+  <p>
+    All Sonnet results use $N{=}16$ rollouts per problem. For the 10-problem biology subset,
+    each accuracy is the mean over 160 rollouts. RSA uses $K{=}4$ and $T{=}10$.
+  </p>
+
+  <hr class="d-rule">
+
+  <!-- ===================================================
+       Section 4: Math
+  =================================================== -->
+  <h2>Beyond AIME: Improvements on Mathematical Reasoning</h2>
+
+  <h3>ArXivMath</h3>
+
+  <p>
+    <a href="https://matharena.ai/arxivmath/" target="_blank" rel="noopener">ArXivMath</a> is a
+    recently released benchmark of final-answer research-level math questions sourced from arXiv
+    preprints, updated monthly for low contamination. As of February 2026 it contains 40 questions
+    from December 2025 (17) and January 2026 (23).
+  </p>
+
+  <p>
+    We evaluate RSA with three models released before the benchmark: Gemini 3 Flash,
+    GPT-OSS-120b, and Qwen3-4B-Instruct-2507, using $N{=}16$, $K{=}4$. Gemini 3 Flash
+    is limited to 3 steps due to resource constraints.
+  </p>
+
+  <figure>
+    <img src="./static/images/arxivmath_gemini_gpt_qwen.png" alt="ArXivMath — Gemini, GPT, Qwen">
+    <figcaption>
+      <b>Figure 4.</b> ArXivMath. RSA with Gemini 3 Flash (3 steps) reaches 63%, surpassing
+      GPT-5.2 (high). GPT-OSS-120b with RSA reaches 56%. Qwen3-4B-Instruct improves from
+      20% to 31% with RSA.
+    </figcaption>
+  </figure>
+
+  <p>
+    We then evaluate Claude Opus 4.6 with $N{=}16$, $K{=}4$, $T{=}4$, including the February
+    subset alongside December and January. RSA achieves state-of-the-art on the leaderboard,
+    beating Gemini 3.1 Pro and GPT 5.4 (xhigh).
+  </p>
+
+  <figure>
+    <img src="./static/images/arxivmath_opus.png" alt="ArXivMath — Claude Opus 4.6">
+    <figcaption>
+      <b>Figure 5.</b> ArXivMath with Claude Opus 4.6. RSA surpasses Gemini 3.1 Pro and
+      GPT 5.4 (xhigh) on the leaderboard.
+    </figcaption>
+  </figure>
+
+  <div class="callout">
+    <strong>Note &mdash;</strong> We use Opus with the <code>adaptive</code> reasoning parameter
+    rather than the configuration in the official MathArena results
+    (<a href="https://x.com/j_dekoninck/status/2024868709555163231?s=20" target="_blank" rel="noopener">details</a>).
+    This yields slightly lower initial-step performance; we expect better results with the
+    corrected sampling parameters.
+  </div>
+
+  <h3>QED-Nano</h3>
+
+  <p>
+    <em>Work by the LLM Provers Team &mdash; see the
+    <a href="https://huggingface.co/spaces/lm-provers/qed-nano-blogpost" target="_blank" rel="noopener">QED-Nano blogpost</a>
+    for full details.</em>
+  </p>
+
+  <p>
+    QED-Nano trains a compact 4B model to write Olympiad-level mathematical proofs via three
+    steps: (1) SFT distillation from DeepSeek-Math-V2, (2) RL with dense rubric-based rewards,
+    and (3) training with a <em>reasoning cache</em> (Wu et al., 2026) that decomposes long
+    proofs into iterative summarize-and-refine cycles for continual test-time improvement. Among
+    all tested scaffolds, RSA delivers the best performance when the token budget is unconstrained.
+  </p>
+
+  <figure>
+    <img src="./static/images/qednano_results.png" alt="QED-Nano on IMO-ProofBench">
+    <figcaption>
+      <b>Figure 6.</b> QED-Nano on IMO-ProofBench. With RSA, the 4B model matches the
+      performance of Gemini 3 Pro.
+    </figcaption>
+  </figure>
+
+  <hr class="d-rule">
+
+  <!-- ===================================================
+       Section 5
+  =================================================== -->
+  <h2>What&rsquo;s Next?</h2>
+
+  <p>
+    These results highlight the potential of RSA when compute is unconstrained. Improving its
+    <strong>efficiency</strong> for better scalability and extending aggregation ideas to
+    <strong>multi-turn settings</strong> are exciting open directions. If you are interested in
+    tackling hard problems that require extensive reasoning &mdash; let us know!
+  </p>
+
+</div><!-- /d-article -->
+</div><!-- /post-wrap -->
+
+<!-- ============================================================
+     Footer
+============================================================ -->
+<footer class="d-footer">
+  <div class="post-wrap">
+    <p>&copy; 2026 RSA Team &middot; <a href="https://arxiv.org/abs/2509.26626" target="_blank" rel="noopener">arXiv:2509.26626</a></p>
+    <p><a href="./index.html">Back to paper &uarr;</a></p>
+  </div>
+</footer>
+
+</body>
+</html>
